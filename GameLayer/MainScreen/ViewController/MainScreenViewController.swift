@@ -46,6 +46,16 @@ class MainScreenViewController: UIViewController {
         let recordsButton = UIButton(configuration: buttonConfiguration)
         return recordsButton
     }()
+    private let settingsButton: UIButton = {
+        var buttonConfiguration = UIButton.Configuration.plain()
+        buttonConfiguration.image = UIImage(systemName: "gearshape")
+        buttonConfiguration.title = "Настройки"
+        buttonConfiguration.imagePadding = 3
+        buttonConfiguration.cornerStyle = .medium
+        buttonConfiguration.baseForegroundColor = .white
+        let recordsButton = UIButton(configuration: buttonConfiguration)
+        return recordsButton
+    }()
     private let buttonStackView: UIStackView = {
         var buttonStackView = UIStackView(frame: .zero)
         buttonStackView.axis = .vertical
@@ -59,15 +69,22 @@ class MainScreenViewController: UIViewController {
         super.viewDidLoad()
         makeConstraints()
         navigationBarSetup()
-        startButtonAction()
-        recordsButtonAction()
+        addActionForButton()
     }
   
     /// действие для кнопок главного меню
+    
+    private func addActionForButton() {
+        startButtonAction()
+        recordsButtonAction()
+        settingsButtonAction()
+    }
+    
     private func startButtonAction() {
         startButton.addAction(UIAction(handler: { _ in
             Game.shared.gameSession = GameSession()
             let vc = GameViewController()
+            vc.difficulty = Game.shared.difficulty
             vc.delegate = self
             self.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
@@ -79,6 +96,14 @@ class MainScreenViewController: UIViewController {
             self.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
     }
+    
+    private func settingsButtonAction() {
+        settingsButton.addAction(UIAction(handler: { _ in
+            let vc = SettingsViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        }), for: .touchUpInside)
+    }
+    
     
     
 }
@@ -97,19 +122,18 @@ private extension MainScreenViewController {
         
         self.view.addSubview(imageLable)
         imageLable.snp.makeConstraints { make in
-           
-           
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview().offset(-150)
         }
         
         self.buttonStackView.addArrangedSubview(startButton)
         self.buttonStackView.addArrangedSubview(recordsButton)
+        self.buttonStackView.addArrangedSubview(settingsButton)
         self.view.addSubview(buttonStackView)
         buttonStackView.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(130)
-            make.height.equalTo(100)
+            make.height.equalTo(150)
         }
     }
 }

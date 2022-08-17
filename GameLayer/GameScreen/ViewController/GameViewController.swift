@@ -10,10 +10,30 @@ import UIKit
 
 class GameViewController: UIViewController {
 
+    private weak var timer: Timer!
+    private var runCount = 20 {
+        didSet{
+            self.timerLable.text = String(self.runCount)
+        }
+    }
     private var question: Question?
     private var gameLevel = 1
     private var currentAnswers = 0
     var delegate: SaveGameSessionProgressProtocol?
+    var difficulty: Difficulty = .easy
+    var difficultyGameStrategy: DifficultyProtocol {
+        switch self.difficulty {
+        case .easy:
+            return EasyDificultyStrategy()
+        case .hard:
+            return HardDificultyStrategy(timer: self.timer)
+        }
+    }
+    
+    private var timerLable: UILabel = {
+        let lable = UILabel()
+        return lable
+    }()
     
     private let backgroundImage: UIImageView = {
         var backgroundImage = UIImageView(image: UIImage(named: "gameBackgroundImage"))
@@ -81,6 +101,10 @@ class GameViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if self.difficulty == .hard {
+            self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true)
+        }
+        self.timerLable.text = String(self.runCount)
         navigationBarSetup()
         makeConstraints()
         self.answerButtonA.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
@@ -88,8 +112,15 @@ class GameViewController: UIViewController {
         self.answerButtonC.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
         self.answerButtonD.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
         
-        self.question = getNextQuestion()
+        self.question = self.difficultyGameStrategy.getNextQuestion(for: self.gameLevel)
         setButtonText(for: self.question)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if self.difficulty == .hard, self.timer != nil {
+            self.timer.invalidate()
+        }
+        
     }
     
     /// Действие при нажатии на кнопку выбора ответа
@@ -104,29 +135,28 @@ class GameViewController: UIViewController {
             self.gameLevel += 1
             self.navigationItem.title = "Вопрос №\(self.gameLevel)"
             self.currentAnswers += 1
-            self.question = getNextQuestion()
+            self.question = self.difficultyGameStrategy.getNextQuestion(for: self.gameLevel)
             setButtonText(for: self.question)
+            self.runCount = 20
         } else {
             /// нет, выводим алерт
             sender.configuration?.baseBackgroundColor = .red
+            if self.difficulty == .hard {
+                self.timer.invalidate()
+            }
             showAlert(title: "И... это не верный ответ!", messege: "правильный ответ \(question.currentAnswer)\n к сожалению вы проиграли!")
-        }
-    }
-    
-    private func getNextQuestion() -> Question? {
-        if self.gameLevel <= 10 {
-            let questions = DataManager.data.questions.filter {$0.difficult == self.gameLevel}
-            let random = Int.random(in: 0...questions.count - 1)
-            return questions[random]
-        } else {
-            showAlert(title: "ПОЗДРАВЛЯЮ!!!!", messege: "Теперь вы миллионер!!!")
-            return nil
         }
     }
     
     /// функция утанавливает значения текствью и кнопок в соответвствии с переданным вопросом
     private func setButtonText(for question: Question?) {
-        guard let question = question else {return}
+        guard let question = question else {
+            if self.difficulty == .hard {
+                self.timer.invalidate()
+            }
+            showAlert(title: "ПОЗДРАВЛЯЮ!!!!", messege: "Теперь вы миллионер!!!")
+            return
+        }
         self.questionTextView.text = question.question
         self.answerButtonA.setAnswerText(text: question.answers[0], for: .a)
         self.answerButtonB.setAnswerText(text: question.answers[1], for: .b)
@@ -143,6 +173,14 @@ class GameViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
   
+    @objc private func fireTimer() {
+        self.runCount -= 1
+        
+        if self.runCount == 0 {
+            self.timer.invalidate()
+            showAlert(title: "УВЫ...", messege: "Время вышло, Вы не успели дать правильный ответ😢")
+        }
+    }
     
 }
 
@@ -175,13 +213,19 @@ private extension GameViewController {
             make.right.left.equalToSuperview().inset(10)
             make.height.equalTo(100)
         }
+        
+        self.view.addSubview(timerLable)
+        timerLable.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(100)
+            make.height.equalTo(100)
+        }
     }
 }
 
 //MARK: - Navigation appearance
 private extension GameViewController {
     func navigationBarSetup() {
-        
         self.navigationItem.title = "Вопрос №\(self.gameLevel)"
         
         let navBarAppearance = UINavigationBarAppearance()
@@ -218,6 +262,7 @@ private extension GameViewController {
     }
     
     @objc private func rightBarButtonAction() {
+        self.navigationController?.popViewController(animated: true)
         // to do выплывающее меню со списком выйгранной суммы и подсказками
     }
 }

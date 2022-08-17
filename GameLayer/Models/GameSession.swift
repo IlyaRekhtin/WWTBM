@@ -19,6 +19,7 @@ final class GameSession: Codable {
         dateFormatter.locale = .current
         dateFormatter.dateFormat = "HH:mm E, d MMM y"
         self.gameDate = dateFormatter.string(from: Date.now)
+        
     }
     
     func getGameDate() -> String {

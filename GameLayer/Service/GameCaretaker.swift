@@ -12,6 +12,7 @@ final class GameCaretaker {
     private let decoder = JSONDecoder()
     private let key = "results"
     
+    
     func saveGameSession(results: [GameSession]) {
         do {
             let data = try self.encoder.encode(results)
