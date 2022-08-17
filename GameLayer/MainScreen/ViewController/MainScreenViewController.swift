@@ -8,7 +8,12 @@
 import UIKit
 import SnapKit
 
+protocol SaveGameSessionProgressProtocol {
+    func saveGameResults(currentAnswers: Int)
+}
+
 class MainScreenViewController: UIViewController {
+    
     private let backgroundImage: UIImageView = {
         var backgroundImage = UIImageView(image: UIImage(named: "backgroundImageMain"))
         backgroundImage.contentMode = .scaleToFill
@@ -41,7 +46,6 @@ class MainScreenViewController: UIViewController {
         let recordsButton = UIButton(configuration: buttonConfiguration)
         return recordsButton
     }()
-    
     private let buttonStackView: UIStackView = {
         var buttonStackView = UIStackView(frame: .zero)
         buttonStackView.axis = .vertical
@@ -50,15 +54,32 @@ class MainScreenViewController: UIViewController {
         return buttonStackView
     }()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         makeConstraints()
-        
+        navigationBarSetup()
+        startButtonAction()
+        recordsButtonAction()
+    }
+  
+    /// действие для кнопок главного меню
+    private func startButtonAction() {
         startButton.addAction(UIAction(handler: { _ in
             Game.shared.gameSession = GameSession()
-            self.navigationController?.pushViewController(GameViewController(), animated: true)
+            let vc = GameViewController()
+            vc.delegate = self
+            self.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
     }
+    
+    private func recordsButtonAction() {
+        recordsButton.addAction(UIAction(handler: { _ in
+            let vc = ResultsViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        }), for: .touchUpInside)
+    }
+    
     
 }
 
@@ -90,5 +111,22 @@ private extension MainScreenViewController {
             make.bottom.equalToSuperview().inset(130)
             make.height.equalTo(100)
         }
+    }
+}
+
+//MARK: - Save game results protocol
+extension MainScreenViewController: SaveGameSessionProgressProtocol {
+    func saveGameResults(currentAnswers: Int) {
+        guard let gameSession = Game.shared.gameSession else {return}
+        gameSession.setCurrentAnswersCountValue(value: currentAnswers)
+        Game.shared.saveGameResults(gameSession: gameSession)
+    }
+}
+
+//MARK: - Navigation appearance
+private extension MainScreenViewController {
+    func navigationBarSetup() {
+        self.navigationItem.backButtonTitle = "Выйти"
+        self.navigationController?.navigationBar.tintColor = .white
     }
 }

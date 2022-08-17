@@ -14,7 +14,7 @@ final class DataManager {
     private init() {}
     
     enum Price: Int {
-        case one = 0
+        case one = 1
         case two
         case thee
         case four

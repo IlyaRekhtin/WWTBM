@@ -8,29 +8,38 @@
 import Foundation
 import UIKit
 
-final class GameSession {
+final class GameSession: Codable {
     
     private var gameDate: String
-    private var currentAnswersCount = 0
     private var totalPriceWin = 0
-    private var gameLevel = 1
+    private var currentAnswersCount = 0
     
     init() {
-        let date = Date.now.description
-        self.gameDate = date
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current
+        dateFormatter.dateFormat = "HH:mm E, d MMM y"
+        self.gameDate = dateFormatter.string(from: Date.now)
     }
     
-    func addGameLevel() {
-        self.currentAnswersCount += 1
-        self.gameLevel += 1
+    func getGameDate() -> String {
+        self.gameDate
     }
     
-    func getGameLevel() -> Int{
-        self.gameLevel
+    func getGameTotalPrice() -> Int {
+        self.totalPriceWin
     }
     
-    func increaseTotalPrice(gameLevel: Int) {
-        switch DataManager.Price(rawValue: gameLevel) {
+    func getcurrentAnswersCount() -> Int {
+        self.currentAnswersCount
+    }
+    
+    func setCurrentAnswersCountValue(value: Int) {
+        self.currentAnswersCount = value
+        increaseTotalPrice(currentAnswersCount: value)
+    }
+    
+    private func increaseTotalPrice(currentAnswersCount: Int) {
+        switch DataManager.Price(rawValue: currentAnswersCount) {
         case .one:
             self.totalPriceWin = 1000
         case .two:
@@ -55,4 +64,5 @@ final class GameSession {
             self.totalPriceWin = 0
         }
     }
+    
 }

@@ -32,6 +32,7 @@ class AnswerButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /// функция добавляет к титлу кнопки вариант ответа 
     func setAnswerText(text: String, for variant: VariantAnswer ) {
         self.text = text
         self.configuration?.title = variant.rawValue + text
