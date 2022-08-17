@@ -73,7 +73,6 @@ private extension SettingsViewController {
         backgroundView.snp.makeConstraints { make in
             make.top.right.left.bottom.equalToSuperview()
         }
-        
         self.settingsStackView.addArrangedSubview(self.gameOnTimeLable)
         self.settingsStackView.addArrangedSubview(self.gameOnTimeSwitch)
         self.view.addSubview(settingsStackView)
