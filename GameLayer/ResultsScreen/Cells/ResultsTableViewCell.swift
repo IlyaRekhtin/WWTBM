@@ -13,7 +13,7 @@ class ResultsTableViewCell: UITableViewCell {
     
     private var date: UILabel = {
         var lable = UILabel()
-        lable.textColor = .black
+        lable.textColor = .white
         lable.font = UIFont(name: "Times New Roman", size: 17)
         return lable
     }()
@@ -21,7 +21,7 @@ class ResultsTableViewCell: UITableViewCell {
     private var percentOfCurrentAnswers: UILabel = {
         var lable = UILabel()
         lable.textAlignment = .right
-        lable.textColor = .black
+        lable.textColor = .white
         lable.font = UIFont(name: "Times New Roman", size: 17)
         return lable
     }()

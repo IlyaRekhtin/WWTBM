@@ -32,6 +32,7 @@ class MainScreenViewController: UIViewController {
     private let startButton: UIButton = {
         var buttonConfiguration = UIButton.Configuration.filled()
         buttonConfiguration.title = "НАЧАТЬ ИГРУ"
+        buttonConfiguration.attributedTitle?.font = UIFont(name: "AppleMyungjo", size: 24)
         buttonConfiguration.cornerStyle = .large
         buttonConfiguration.baseBackgroundColor = .blue
         buttonConfiguration.baseForegroundColor = .white
@@ -41,6 +42,7 @@ class MainScreenViewController: UIViewController {
     private let recordsButton: UIButton = {
         var buttonConfiguration = UIButton.Configuration.plain()
         buttonConfiguration.title = "Рекорды"
+        buttonConfiguration.attributedTitle?.font = UIFont(name: "AppleMyungjo", size: 24)
         buttonConfiguration.cornerStyle = .small
         buttonConfiguration.baseForegroundColor = .white
         let recordsButton = UIButton(configuration: buttonConfiguration)
@@ -50,6 +52,7 @@ class MainScreenViewController: UIViewController {
         var buttonConfiguration = UIButton.Configuration.plain()
         buttonConfiguration.image = UIImage(systemName: "gearshape")
         buttonConfiguration.title = "Настройки"
+        buttonConfiguration.attributedTitle?.font = UIFont(name: "AppleMyungjo", size: 24)
         buttonConfiguration.imagePadding = 3
         buttonConfiguration.cornerStyle = .medium
         buttonConfiguration.baseForegroundColor = .white

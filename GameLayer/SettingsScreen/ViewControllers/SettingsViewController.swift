@@ -32,6 +32,13 @@ class SettingsViewController: UIViewController {
     private var gameOnTimeSwitch: UISwitch = {
         var gameOnTimeSwitch = UISwitch()
         gameOnTimeSwitch.isOn = Game.shared.difficulty == .easy ? false : true
+        gameOnTimeSwitch.addAction(UIAction(handler: { _ in
+            if gameOnTimeSwitch.isOn {
+                Game.shared.difficulty = .hard
+            } else {
+                Game.shared.difficulty = .easy
+            }
+        }), for: .valueChanged)
         return gameOnTimeSwitch
     }()
     
@@ -40,28 +47,40 @@ class SettingsViewController: UIViewController {
         settingsStackView.axis = .horizontal
         settingsStackView.spacing = 3
         settingsStackView.distribution = .fill
+        settingsStackView.alignment = .center
         return settingsStackView
     }()
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         makeConstraints()
-        gameOnTimeSwitch.addAction(UIAction(handler: { _ in
-            if self.gameOnTimeSwitch.isOn {
-                Game.shared.difficulty = .hard
-            } else {
-                Game.shared.difficulty = .easy
-            }
-        }), for: .valueChanged)
+        navigationBarSetup()
     }
-    
-    
-    
-    
 }
 
+//MARK: - Navigation appearance
+private extension SettingsViewController {
+    func navigationBarSetup() {
+        self.navigationItem.title = "Настройки"
+        
+        let navBarAppearance = UINavigationBarAppearance()
+        
+        // bacground
+        navBarAppearance.configureWithOpaqueBackground()
+        navBarAppearance.backgroundColor = UIColor(red: 0.4, green: 0.4, blue: 0.5, alpha: 0.8)
+        
+        //title
+        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        
+        self.navigationItem.standardAppearance = navBarAppearance
+        self.navigationItem.compactAppearance = navBarAppearance
+        self.navigationItem.scrollEdgeAppearance = navBarAppearance
+        self.navigationItem.compactScrollEdgeAppearance = navBarAppearance
+        
+    }
+}
 //MARK: - snapKit
 private extension SettingsViewController {
     func makeConstraints() {

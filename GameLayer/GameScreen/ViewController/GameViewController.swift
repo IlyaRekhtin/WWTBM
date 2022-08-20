@@ -10,28 +10,32 @@ import UIKit
 
 class GameViewController: UIViewController {
 
-    private weak var timer: Timer!
+    private var timer: Timer!
     private var runCount = 20 {
         didSet{
             self.timerLable.text = String(self.runCount)
         }
     }
     private var question: Question?
-    private var gameLevel = 1
+    private var gameLevel = Observable<Int>(1)
     private var currentAnswers = 0
     var delegate: SaveGameSessionProgressProtocol?
     var difficulty: Difficulty = .easy
     var difficultyGameStrategy: DifficultyProtocol {
         switch self.difficulty {
         case .easy:
+            self.timerLable.isHidden = true
             return EasyDificultyStrategy()
         case .hard:
+            self.timerLable.isHidden = false
             return HardDificultyStrategy(timer: self.timer)
         }
     }
     
     private var timerLable: UILabel = {
         let lable = UILabel()
+        lable.textColor = .white
+        lable.font = UIFont(name: "Times New Roman", size: 28)
         return lable
     }()
     
@@ -104,16 +108,18 @@ class GameViewController: UIViewController {
         if self.difficulty == .hard {
             self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true)
         }
+      
         self.timerLable.text = String(self.runCount)
         navigationBarSetup()
         makeConstraints()
-        self.answerButtonA.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
-        self.answerButtonB.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
-        self.answerButtonC.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
-        self.answerButtonD.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
-        
-        self.question = self.difficultyGameStrategy.getNextQuestion(for: self.gameLevel)
+        addTargetForAnswerButton()
+
+        self.question = self.difficultyGameStrategy.getNextQuestion(for: self.gameLevel.value)
         setButtonText(for: self.question)
+        
+        self.gameLevel.addObserver(self, options: [.new]) { [weak self] (gameLevel, _) in
+            self?.navigationItem.title = "Вопрос №\(gameLevel)"
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -122,6 +128,13 @@ class GameViewController: UIViewController {
         }
         
     }
+    private func addTargetForAnswerButton() {
+        self.answerButtonA.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
+        self.answerButtonB.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
+        self.answerButtonC.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
+        self.answerButtonD.addTarget(self, action: #selector(answerButtonAction(sender:)), for: .touchUpInside)
+    }
+    
     
     /// Действие при нажатии на кнопку выбора ответа
     @objc private func answerButtonAction(sender: AnswerButton) {
@@ -132,10 +145,9 @@ class GameViewController: UIViewController {
             /// если да переходим на следующий уровень,
             /// меняем титл навАйтема
             /// получаем новый вопрос
-            self.gameLevel += 1
-            self.navigationItem.title = "Вопрос №\(self.gameLevel)"
+            self.gameLevel.value += 1
             self.currentAnswers += 1
-            self.question = self.difficultyGameStrategy.getNextQuestion(for: self.gameLevel)
+            self.question = self.difficultyGameStrategy.getNextQuestion(for: self.gameLevel.value)
             setButtonText(for: self.question)
             self.runCount = 20
         } else {
@@ -173,7 +185,7 @@ class GameViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
   
-    @objc private func fireTimer() {
+  @objc private func fireTimer() {
         self.runCount -= 1
         
         if self.runCount == 0 {
@@ -216,9 +228,9 @@ private extension GameViewController {
         
         self.view.addSubview(timerLable)
         timerLable.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.width.equalTo(100)
-            make.height.equalTo(100)
+            make.left.equalToSuperview().inset(10)
+            make.bottom.equalTo(self.questionTextView.snp.top).inset(10)
+            make.width.height.equalTo(60)
         }
     }
 }
@@ -226,7 +238,7 @@ private extension GameViewController {
 //MARK: - Navigation appearance
 private extension GameViewController {
     func navigationBarSetup() {
-        self.navigationItem.title = "Вопрос №\(self.gameLevel)"
+        self.navigationItem.title = "Вопрос №\(self.gameLevel.value)"
         
         let navBarAppearance = UINavigationBarAppearance()
         
