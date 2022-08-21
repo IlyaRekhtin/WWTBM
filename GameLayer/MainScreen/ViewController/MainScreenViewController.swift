@@ -56,9 +56,19 @@ class MainScreenViewController: UIViewController {
         buttonConfiguration.imagePadding = 3
         buttonConfiguration.cornerStyle = .medium
         buttonConfiguration.baseForegroundColor = .white
-        let recordsButton = UIButton(configuration: buttonConfiguration)
-        return recordsButton
+        let settingsButton = UIButton(configuration: buttonConfiguration)
+        return settingsButton
     }()
+    private let addNewQuestions: UIButton = {
+        var buttonConfiguration = UIButton.Configuration.plain()
+        buttonConfiguration.title = "Новый вопрос"
+        buttonConfiguration.attributedTitle?.font = UIFont(name: "AppleMyungjo", size: 24)
+        buttonConfiguration.cornerStyle = .medium
+        buttonConfiguration.baseForegroundColor = .white
+        let addNewQuestions = UIButton(configuration: buttonConfiguration)
+        return addNewQuestions
+    }()
+    
     private let buttonStackView: UIStackView = {
         var buttonStackView = UIStackView(frame: .zero)
         buttonStackView.axis = .vertical
@@ -81,6 +91,7 @@ class MainScreenViewController: UIViewController {
         startButtonAction()
         recordsButtonAction()
         settingsButtonAction()
+        newQuestionsButtonAction()
     }
     
     private func startButtonAction() {
@@ -107,7 +118,12 @@ class MainScreenViewController: UIViewController {
         }), for: .touchUpInside)
     }
     
-    
+    private func newQuestionsButtonAction() {
+        addNewQuestions.addAction(UIAction(handler: { _ in
+            let vc = AddQuestionsViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        }), for: .touchUpInside)
+    }
     
 }
 
@@ -132,11 +148,12 @@ private extension MainScreenViewController {
         self.buttonStackView.addArrangedSubview(startButton)
         self.buttonStackView.addArrangedSubview(recordsButton)
         self.buttonStackView.addArrangedSubview(settingsButton)
+        self.buttonStackView.addArrangedSubview(addNewQuestions)
         self.view.addSubview(buttonStackView)
         buttonStackView.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(20)
             make.bottom.equalToSuperview().inset(130)
-            make.height.equalTo(150)
+            make.height.equalTo(200)
         }
     }
 }

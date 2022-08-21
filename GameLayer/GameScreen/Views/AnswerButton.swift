@@ -7,14 +7,16 @@
 
 import UIKit
 
+enum VariantAnswer: String {
+     case a = "A: "
+     case b = "B: "
+     case c = "C: "
+     case d = "D: "
+ }
+
 class AnswerButton: UIButton {
     
-    enum VariantAnswer: String {
-        case a = "A: "
-        case b = "B: "
-        case c = "C: "
-        case d = "D: "
-    }
+   
     
     var text = ""
     
