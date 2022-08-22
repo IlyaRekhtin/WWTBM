@@ -31,16 +31,16 @@ final class Game {
         }
     }
     var gameSession: GameSession?
-    private var service = GameCaretaker()
+    private var gameCaretaker = GameCaretaker()
     private var gameResults = [GameSession]()
     
     private init() {
-        self.gameResults = service.fetchSaveGameSession()
+        self.gameResults = gameCaretaker.fetchSaveGameSession()
     }
     
     func saveGameResults(gameSession: GameSession) {
         self.gameResults.append(gameSession)
-        self.service.saveGameSession(results: gameResults)
+        self.gameCaretaker.saveGameSession(results: gameResults)
         self.gameSession = nil
         
     }

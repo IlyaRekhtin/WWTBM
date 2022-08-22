@@ -8,17 +8,15 @@
 import UIKit
 
 enum VariantAnswer: String {
-     case a = "A: "
-     case b = "B: "
-     case c = "C: "
-     case d = "D: "
+     case a = "A"
+     case b = "B"
+     case c = "C"
+     case d = "D"
  }
 
 class AnswerButton: UIButton {
     
-   
-    
-    var text = ""
+    var text: String = ""
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -37,6 +35,6 @@ class AnswerButton: UIButton {
     /// функция добавляет к титлу кнопки вариант ответа 
     func setAnswerText(text: String, for variant: VariantAnswer ) {
         self.text = text
-        self.configuration?.title = variant.rawValue + text
+        self.configuration?.title = "\(variant.rawValue): \(text)"
     }
 }

@@ -10,22 +10,22 @@ import UIKit
 final class AddQuestionTableViewCell: UITableViewCell, UITextFieldDelegate, UITextViewDelegate {
     static let reuseID = "add questions cell"
     
-    private var questionTextView: UITextView = {
+    var questionTextView: UITextView = {
         var textView = UITextView()
         textView.layer.cornerRadius = 10
         textView.layer.borderColor = UIColor.black.cgColor
         textView.layer.borderWidth = 1
         textView.textColor = .black
-        textView.font = UIFont(name: "AppleMyungjo", size: 18)
+        textView.font = UIFont(name: "AppleMyungjo", size: 24)
         textView.textAlignment = .left
         return textView
     }()
     
     // Answers block
-    private var answerA: UITextField!
-    private var answerB: UITextField!
-    private var answerC: UITextField!
-    private var answerD: UITextField!
+    var answerA: UITextField!
+    var answerB: UITextField!
+    var answerC: UITextField!
+    var answerD: UITextField!
     
     private var answerALable: UILabel!
     private var answerBLable: UILabel!
@@ -37,9 +37,29 @@ final class AddQuestionTableViewCell: UITableViewCell, UITextFieldDelegate, UITe
     private var answerChStack: UIStackView!
     private var answerDhStack: UIStackView!
     
+    private let lableForSegmentedControl: UILabel = {
+        let lable = UILabel()
+        lable.text = "Правильный вариант ответа"
+        lable.textColor = .black
+        lable.font = UIFont(name: "AppleMyungjo", size: 17)
+        lable.textAlignment = .center
+        return lable
+    }()
+    var segmentedControl: UISegmentedControl = {
+        var segmentedControl = UISegmentedControl(items: ["A", "B", "C", "D"])
+        return segmentedControl
+    }()
     
     
     // Difficult block
+    private let lableDiffSlider: UILabel = {
+        let lable = UILabel()
+        lable.text = "Определите сложность вопроса"
+        lable.textColor = .black
+        lable.font = UIFont(name: "AppleMyungjo", size: 17)
+        lable.textAlignment = .center
+        return lable
+    }()
     private var difficultSlider: UISlider = {
         var slider = UISlider()
         slider.minimumValue = 1
@@ -47,11 +67,22 @@ final class AddQuestionTableViewCell: UITableViewCell, UITextFieldDelegate, UITe
         slider.value = slider.minimumValue
         return slider
     }()
+    var difficultValueLable: UILabel = {
+        var lable = UILabel()
+        lable.textColor = .black
+        lable.font = UIFont(name: "AppleMyungjo", size: 17)
+        lable.layer.borderColor = UIColor.black.cgColor
+        lable.layer.borderWidth = 1
+        lable.layer.cornerRadius = 10
+        lable.textAlignment = .center
+        return lable
+    }()
+    private var difficulthStack: UIStackView!
     
     private let vStack: UIStackView = {
         var stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.spacing = 5
         return stackView
     }()
@@ -86,6 +117,10 @@ final class AddQuestionTableViewCell: UITableViewCell, UITextFieldDelegate, UITe
         self.answerBhStack = configurationHStackView()
         self.answerChStack = configurationHStackView()
         self.answerDhStack = configurationHStackView()
+        
+        self.difficultValueLable.text = "1"
+        self.difficulthStack = configurationHStackView()
+        self.difficultSlider.addTarget(self, action: #selector(actionForDiffSlider(sender:)), for: .valueChanged)
     }
     
     private func configurateNewAnswerTextField() -> UITextField{
@@ -102,7 +137,7 @@ final class AddQuestionTableViewCell: UITableViewCell, UITextFieldDelegate, UITe
     
     private func configurationAnswersLable(variant: VariantAnswer) -> UILabel {
         let lable = UILabel()
-        lable.text = variant.rawValue
+        lable.text = variant.rawValue + ":"
         lable.textColor = .black
         lable.font = UIFont(name: "AppleMyungjo", size: 17)
         lable.textAlignment = .right
@@ -116,19 +151,25 @@ final class AddQuestionTableViewCell: UITableViewCell, UITextFieldDelegate, UITe
         stackView.spacing = 5
         return stackView
     }
+    
+    @objc private func actionForDiffSlider(sender: UISlider) {
+        let sliderValue = roundingSliderValueToInt(number: sender.value)
+        sender.setValue(Float(sliderValue), animated: false)
+        self.difficultValueLable.text = String(sliderValue)
+    }
+    
+    private func roundingSliderValueToInt(number: Float) -> Int {
+        let remainder:Double = Double(1 - Int(number))
+        return remainder > 0.5 ? Int(number) + 1 : Int(number)
+    }
+    
+    
 }
 
 
 //MARK: - snap kit
 private extension AddQuestionTableViewCell {
     func makeConstraints() {
-        self.contentView.addSubview(questionTextView)
-        questionTextView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.left.right.equalToSuperview().inset(5)
-            make.height.equalTo(100)
-        }
-        
         self.answerAhStack.addArrangedSubview(answerALable)
         self.answerAhStack.addArrangedSubview(answerA)
         
@@ -141,54 +182,64 @@ private extension AddQuestionTableViewCell {
         self.answerDhStack.addArrangedSubview(answerDLable)
         self.answerDhStack.addArrangedSubview(answerD)
         
+        self.difficulthStack.addArrangedSubview(self.difficultSlider)
+        self.difficulthStack.addArrangedSubview(self.difficultValueLable)
+        
+        self.vStack.addArrangedSubview(questionTextView)
+        questionTextView.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(100)
+        }
         self.vStack.addArrangedSubview(answerAhStack)
-        self.vStack.addArrangedSubview(answerBhStack)
-        self.vStack.addArrangedSubview(answerChStack)
-        self.vStack.addArrangedSubview(answerDhStack)
-        
-        answerALable.snp.makeConstraints { make in
-            make.width.equalTo(30)
-        }
-        
-        answerBLable.snp.makeConstraints { make in
-            make.width.equalTo(30)
-        }
-        
-        answerCLable.snp.makeConstraints { make in
-            make.width.equalTo(30)
-        }
-        
-        answerDLable.snp.makeConstraints { make in
-            make.width.equalTo(30)
-        }
-        
         answerA.snp.makeConstraints { make in
-            make.height.equalTo(30)
+            make.height.greaterThanOrEqualTo(30)
         }
+        answerALable.snp.makeConstraints { make in
+            make.width.equalTo(self.answerA.snp.height)
+        }
+        
+        self.vStack.addArrangedSubview(answerBhStack)
         answerB.snp.makeConstraints { make in
-            make.height.equalTo(30)
+            make.height.greaterThanOrEqualTo(30)
         }
+        answerBLable.snp.makeConstraints { make in
+            make.width.equalTo(self.answerB.snp.height)
+        }
+        
+        self.vStack.addArrangedSubview(answerChStack)
         answerC.snp.makeConstraints { make in
-            make.height.equalTo(30)
+            make.height.greaterThanOrEqualTo(30)
         }
+        answerCLable.snp.makeConstraints { make in
+            make.width.equalTo(self.answerC.snp.height)
+        }
+        
+        self.vStack.addArrangedSubview(answerDhStack)
         answerD.snp.makeConstraints { make in
-            make.height.equalTo(30)
+            make.height.greaterThanOrEqualTo(30)
         }
+        answerDLable.snp.makeConstraints { make in
+            make.width.equalTo(self.answerD.snp.height)
+        }
+        
+        self.vStack.addArrangedSubview(lableForSegmentedControl)
+        self.vStack.addArrangedSubview(segmentedControl)
+        self.segmentedControl.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(40)
+        }
+        
+        self.vStack.addArrangedSubview(lableDiffSlider)
+        
+        self.difficultValueLable.snp.makeConstraints { make in
+            make.width.equalTo(40)
+        }
+        
+        self.vStack.addArrangedSubview(difficulthStack)
+        
         
         self.contentView.addSubview(vStack)
         vStack.snp.makeConstraints { make in
-            make.top.equalTo(self.questionTextView.snp.bottom).offset(5)
-            make.right.left.equalToSuperview().inset(5)
+            make.top.right.left.bottom.equalToSuperview().inset(5)
         }
-        
-        self.contentView.addSubview(self.difficultSlider)
-        self.difficultSlider.snp.makeConstraints { make in
-            make.right.left.equalToSuperview().inset(5)
-            make.top.equalTo(self.vStack.snp.bottom)
-            make.bottom.equalToSuperview().inset(5)
-            make.height.equalTo(40)
-        }
-        
         
     }
 }

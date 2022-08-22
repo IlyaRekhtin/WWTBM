@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Question {
-    var question: String
-    var answers:[String]
+struct Question: Codable {
+    var questionText: String
+    var answers:[String: String] = ["A": "", "B": "", "C": "", "D": ""]
     var currentAnswer: String
     var difficult: Int
     

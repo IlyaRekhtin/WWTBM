@@ -169,11 +169,17 @@ class GameViewController: UIViewController {
             showAlert(title: "ПОЗДРАВЛЯЮ!!!!", messege: "Теперь вы миллионер!!!")
             return
         }
-        self.questionTextView.text = question.question
-        self.answerButtonA.setAnswerText(text: question.answers[0], for: .a)
-        self.answerButtonB.setAnswerText(text: question.answers[1], for: .b)
-        self.answerButtonC.setAnswerText(text: question.answers[2], for: .c)
-        self.answerButtonD.setAnswerText(text: question.answers[3], for: .d)
+        self.questionTextView.text = question.questionText
+        
+        guard let answerA = question.answers["A"],
+              let answerB = question.answers["B"],
+              let answerC = question.answers["C"],
+              let answerD = question.answers["D"] else {return}
+        
+        self.answerButtonA.setAnswerText(text: answerA, for: .a)
+        self.answerButtonB.setAnswerText(text: answerB, for: .b)
+        self.answerButtonC.setAnswerText(text: answerC, for: .c)
+        self.answerButtonD.setAnswerText(text: answerD, for: .d)
     }
     
     private func showAlert(title: String, messege: String) {
