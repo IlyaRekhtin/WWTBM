@@ -9,7 +9,7 @@ import UIKit
 
 final class AddQuestionsViewController: UIViewController {
     
-    private let caretaker = QuestionsCaretaker()
+    private let caretaker = GameCaretaker(key: .questions)
     
     private let backgroundImage: UIImageView = {
         var backgroundImage = UIImageView(image: UIImage(named: "backgroundImageMain"))
@@ -95,39 +95,14 @@ private extension AddQuestionsViewController {
 //MARK: - Navigation appearance
 private extension AddQuestionsViewController {
     func navigationBarSetup() {
+        self.navigationItem.standardAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.compactAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.scrollEdgeAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.compactScrollEdgeAppearance = Appearance.navigationBarAppearance()
         
         self.navigationItem.backButtonDisplayMode = .minimal
-        
-        
-        let navBarAppearance = UINavigationBarAppearance()
-        
-        // bacground
-        navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.backgroundColor = UIColor(red: 0.4, green: 0.4, blue: 0.5, alpha: 0.8)
-                
-        //title
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.systemBlue]
-        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
-        
-        // all button
-        let barButtonItemAppearance = UIBarButtonItemAppearance(style: .plain)
-        
-        barButtonItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-        barButtonItemAppearance.disabled.titleTextAttributes = [.foregroundColor: UIColor.lightText]
-        barButtonItemAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.label]
-        barButtonItemAppearance.focused.titleTextAttributes = [.foregroundColor: UIColor.white]
-        
         let rightBarButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(rightBarButtonAction))
         self.navigationItem.rightBarButtonItem = rightBarButton
-        
-        navBarAppearance.buttonAppearance = barButtonItemAppearance
-        navBarAppearance.backButtonAppearance = barButtonItemAppearance
-        navBarAppearance.doneButtonAppearance = barButtonItemAppearance
-        
-        self.navigationItem.standardAppearance = navBarAppearance
-        self.navigationItem.compactAppearance = navBarAppearance
-        self.navigationItem.scrollEdgeAppearance = navBarAppearance
-        self.navigationItem.compactScrollEdgeAppearance = navBarAppearance
     }
     
     @objc private func rightBarButtonAction() {
@@ -137,7 +112,10 @@ private extension AddQuestionsViewController {
                   let answerB = cell.answerB.text,
                   let answerC = cell.answerC.text,
                   let answerD = cell.answerD.text,
-                  let difficultValue = cell.difficultValueLable.text else {return}
+                  let difficultValue = cell.difficultValueLable.text
+            else {
+                return
+            }
             
             builder.setQuestionText(cell.questionTextView.text)
             builder.setAnswers(answerA, for: .a)
@@ -149,7 +127,7 @@ private extension AddQuestionsViewController {
             builder.setDifficult(Int(difficultValue) ?? 1)
             DataManager.data.questions.append(builder.build())
         }
-        caretaker.saveQuestions(results: DataManager.data.questions)
+        caretaker.saveData(data: DataManager.data.questions)
         self.navigationController?.popViewController(animated: true)
     }
 }

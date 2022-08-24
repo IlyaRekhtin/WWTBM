@@ -8,26 +8,21 @@
 import Foundation
 import UIKit
 
+
 final class GameSession: Codable {
     
-    private var gameDate: String
-    private var totalPriceWin = 0
-    private var currentAnswersCount = 0
-    
-    init() {
+    private var gameDate: String = {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = .current
         dateFormatter.dateFormat = "HH:mm E, d MMM y"
-        self.gameDate = dateFormatter.string(from: Date.now)
-        
-    }
+        return dateFormatter.string(from: Date.now)
+    }()
+    private var totalPriceWin = 0
+    private var currentAnswersCount = 0
+    var hintUsageFacade: HintUsageFacade?
     
     func getGameDate() -> String {
         self.gameDate
-    }
-    
-    func getGameTotalPrice() -> Int {
-        self.totalPriceWin
     }
     
     func getcurrentAnswersCount() -> Int {
@@ -38,7 +33,7 @@ final class GameSession: Codable {
         self.currentAnswersCount = value
         increaseTotalPrice(currentAnswersCount: value)
     }
-    
+
     private func increaseTotalPrice(currentAnswersCount: Int) {
         switch DataManager.Price(rawValue: currentAnswersCount) {
         case .one:
@@ -65,5 +60,6 @@ final class GameSession: Codable {
             self.totalPriceWin = 0
         }
     }
-    
 }
+
+

@@ -64,20 +64,10 @@ private extension SettingsViewController {
     func navigationBarSetup() {
         self.navigationItem.title = "Настройки"
         
-        let navBarAppearance = UINavigationBarAppearance()
-        
-        // bacground
-        navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.backgroundColor = UIColor(red: 0.4, green: 0.4, blue: 0.5, alpha: 0.8)
-        
-        //title
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        
-        self.navigationItem.standardAppearance = navBarAppearance
-        self.navigationItem.compactAppearance = navBarAppearance
-        self.navigationItem.scrollEdgeAppearance = navBarAppearance
-        self.navigationItem.compactScrollEdgeAppearance = navBarAppearance
+        self.navigationItem.standardAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.compactAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.scrollEdgeAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.compactScrollEdgeAppearance = Appearance.navigationBarAppearance()
         
     }
 }

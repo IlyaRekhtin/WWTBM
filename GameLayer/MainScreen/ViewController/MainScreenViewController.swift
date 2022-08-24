@@ -68,7 +68,6 @@ class MainScreenViewController: UIViewController {
         let addNewQuestions = UIButton(configuration: buttonConfiguration)
         return addNewQuestions
     }()
-    
     private let buttonStackView: UIStackView = {
         var buttonStackView = UIStackView(frame: .zero)
         buttonStackView.axis = .vertical
@@ -77,24 +76,24 @@ class MainScreenViewController: UIViewController {
         return buttonStackView
     }()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         makeConstraints()
         navigationBarSetup()
         addActionForButton()
     }
-  
-    /// действие для кнопок главного меню
-    
-    private func addActionForButton() {
+}
+
+//MARK: - private
+private extension MainScreenViewController {
+    func addActionForButton() {
         startButtonAction()
         recordsButtonAction()
         settingsButtonAction()
         newQuestionsButtonAction()
     }
     
-    private func startButtonAction() {
+    func startButtonAction() {
         startButton.addAction(UIAction(handler: { _ in
             Game.shared.gameSession = GameSession()
             let vc = GameViewController()
@@ -104,29 +103,27 @@ class MainScreenViewController: UIViewController {
         }), for: .touchUpInside)
     }
     
-    private func recordsButtonAction() {
+    func recordsButtonAction() {
         recordsButton.addAction(UIAction(handler: { _ in
             let vc = ResultsViewController()
             self.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
     }
     
-    private func settingsButtonAction() {
+    func settingsButtonAction() {
         settingsButton.addAction(UIAction(handler: { _ in
             let vc = SettingsViewController()
             self.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
     }
     
-    private func newQuestionsButtonAction() {
+    func newQuestionsButtonAction() {
         addNewQuestions.addAction(UIAction(handler: { _ in
             let vc = AddQuestionsViewController()
             self.navigationController?.pushViewController(vc, animated: true)
         }), for: .touchUpInside)
     }
-    
 }
-
 //MARK: - snapKit
 private extension MainScreenViewController {
     func makeConstraints() {

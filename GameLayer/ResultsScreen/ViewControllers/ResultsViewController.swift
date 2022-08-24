@@ -10,7 +10,7 @@ import UIKit
 class ResultsViewController: UIViewController {
 
     private var tableView: UITableView!
-    private var service = GameCaretaker()
+    private var service = GameCaretaker(key: .gameResults)
     private var gameResults = [GameSession]()
     
     private let backgroundImage: UIImageView = {
@@ -27,7 +27,7 @@ class ResultsViewController: UIViewController {
     
     override func loadView() {
         super.loadView()
-        self.gameResults = service.fetchSaveGameSession()
+        self.gameResults = service.fetchData()
     }
     
     override func viewDidLoad() {
@@ -66,33 +66,10 @@ private extension ResultsViewController {
         
         self.navigationItem.backButtonDisplayMode = .minimal
         
-        
-        let navBarAppearance = UINavigationBarAppearance()
-        
-        // bacground
-        navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.backgroundColor = UIColor(red: 0.4, green: 0.4, blue: 0.5, alpha: 0.8)
-                
-        //title
-        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.systemBlue]
-        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
-        
-        // all button
-        let barButtonItemAppearance = UIBarButtonItemAppearance(style: .plain)
-        
-        barButtonItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
-        barButtonItemAppearance.disabled.titleTextAttributes = [.foregroundColor: UIColor.lightText]
-        barButtonItemAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.label]
-        barButtonItemAppearance.focused.titleTextAttributes = [.foregroundColor: UIColor.white]
-        
-        navBarAppearance.buttonAppearance = barButtonItemAppearance
-        navBarAppearance.backButtonAppearance = barButtonItemAppearance
-        navBarAppearance.doneButtonAppearance = barButtonItemAppearance
-        
-        self.navigationItem.standardAppearance = navBarAppearance
-        self.navigationItem.compactAppearance = navBarAppearance
-        self.navigationItem.scrollEdgeAppearance = navBarAppearance
-        self.navigationItem.compactScrollEdgeAppearance = navBarAppearance
+        self.navigationItem.standardAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.compactAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.scrollEdgeAppearance = Appearance.navigationBarAppearance()
+        self.navigationItem.compactScrollEdgeAppearance = Appearance.navigationBarAppearance()
     }
     
     @objc private func rightBarButtonAction() {

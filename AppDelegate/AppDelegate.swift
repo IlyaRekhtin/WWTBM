@@ -11,21 +11,25 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var timesOfOpenApp = 0
-    let careteker = QuestionsCaretaker()
+    let careteker = GameCaretaker(key: .questions)
 
-    func saveTimesOfOpenApp() {
+    /// метод сохраняет в userdefuls свойство хранящее количество запуска программы
+    private func saveTimesOfOpenApp() {
         UserDefaults.standard.set(timesOfOpenApp, forKey: "timesOpenApp")
     }
     
-    func getNumberTimesOfOpenApp() -> Int {
+    /// получаем данные о количествах запуска программы
+    private func getNumberTimesOfOpenApp() -> Int {
        return UserDefaults.standard.integer(forKey: "timesOpenApp") + 1
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         self.timesOfOpenApp = getNumberTimesOfOpenApp()
+        ///если первый запуск загружаем в userdefuls стандартный список вопросов
         if self.timesOfOpenApp == 1 {
-            careteker.saveQuestions(results: DataManager.data.questions)
+            careteker.saveData(data: DataManager.data.questions)
         }
+        
         return true
     }
 
@@ -44,6 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
+        /// при закрытии программы сохраняем данные о запуске приложения
         saveTimesOfOpenApp()
     }
 

@@ -20,12 +20,16 @@ class AnswerButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        var config = UIButton.Configuration.tinted()
+        var config = UIButton.Configuration.filled()
         config.cornerStyle = .medium
         config.buttonSize = .large
         config.baseForegroundColor = UIColor.white
         config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
         self.configuration = config
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.white.cgColor
+        self.layer.cornerRadius = self.frame.width / 3
+        self.clipsToBounds = true
     }
     
     required init?(coder: NSCoder) {
